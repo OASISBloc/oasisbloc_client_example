@@ -308,7 +308,7 @@ export default {
       config: {
         blockchain_access_point: 'http://172.16.1.12:8888',
         blockchain_chain_id: '201414dff180ea57066f6e7baf27f178ad6cc3f22d52506c34227bf188033d86',
-        data_trade_contract_account_name: 'datatrader21',
+        data_trade_contract_account_name: 'datatrader23',
         user_account_name: 'alice1111111',
         user_account_private_key: '5JA9CDA7Pg6ovEz3hQTBXQ6xWTcAmcEmGU6RY6yDaKEp6bnTtkN',
       },
@@ -356,7 +356,7 @@ export default {
         this.connectionStatus = 'Connected'
       }
     },
-    onSubmit_1(evt) {
+    async onSubmit_1(evt) {
       evt.preventDefault()
       var data
       if (this.providing_data.data_type === 'text') {
@@ -364,17 +364,17 @@ export default {
       } else if (this.providing_data.data_type === 'file') {
         data = this.providing_data.data_file
       }
-      console.log(data)
       data = Buffer.from(data)
       
-      this.osb.registerData(
+      const returnedData = await this.osb.registerData(
         data,
-        this.providing_data.data_type,
         this.providing_data.datatypename,
-        this.providing_data.price,
-        this.providing_data.detailFields, 
+        this.providing_data.detailFields,
+        this.providing_data.price, 
         this.providing_data.period, 
         this.providing_data.decryptKeyList)
+        
+      this.response += '\n' + JSON.stringify(returnedData)
     },
     onReset_1(evt) {
       evt.preventDefault()
@@ -385,11 +385,11 @@ export default {
         this.providing_data.price= ''
         this.providing_data.period= ''
     },
-    onSubmit_2(evt) {
+    async onSubmit_2(evt) {
       evt.preventDefault()
       
-      const returnedData = this.osb.buyData(this.buying_data.reserved_data_id, this.buying_data.buyer_private_key)
-      this.response += '\n' + returnedData
+      const returnedData = await this.osb.buyData(this.buying_data.reserved_data_id, this.buying_data.buyer_private_key)
+      this.response += '\n' + JSON.stringify(returnedData)
     },
     onReset_2(evt) {
       evt.preventDefault()
